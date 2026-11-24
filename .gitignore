@@ -1,0 +1,17 @@
+# versões antigas (arquivo único) — o histórico agora fica no Git
+versoes-anteriores/
+
+# chaves e arquivos locais — nunca subir
+*.env
+.env*
+chave*.txt
+*.key
+
+# exportações da ferramenta
+nichos-*.csv
+nichos-*.json
+
+# sistema
+Thumbs.db
+desktop.ini
+.DS_Store

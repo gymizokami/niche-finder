@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Niche Finder · Canais Dark</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/estilo.css">
+</head>
+<body class="modo-dark">
+
+
+<aside class="side">
+  <a class="home-link" href="index.html">← Todas as ferramentas</a>
+  <div class="brand"><span class="dot"></span><h1>Niche Finder</h1></div>
+  <p class="tag">Minera canais dark novos que já estão viralizando — só vídeos longos, sem Shorts.</p>
+
+  <div class="grp">
+    <h3>API do YouTube</h3>
+    <div class="field">
+      <label class="f" for="key">Chave da API (YouTube Data API v3)</label>
+      <input class="in" id="key" type="password" placeholder="AIza..." autocomplete="off">
+      <label class="chk"><input type="checkbox" id="rememberKey" checked> Lembrar neste navegador</label>
+      <div class="hint">Crie em <a href="https://console.cloud.google.com/apis/library/youtube.googleapis.com" target="_blank" rel="noopener">Google Cloud Console</a> → ativar API → Credenciais → Chave de API. Cota grátis: 10.000 unidades/dia.</div>
+    </div>
+  </div>
+
+  <div class="grp">
+    <h3>Nichos para minerar</h3>
+    <label class="f" for="kws">Palavras-chave (uma por linha)</label>
+    <textarea class="in" id="kws" spellcheck="false"></textarea>
+    <div class="lang-tabs" id="presetTabs">
+      <button data-p="pt" class="on">PT</button><button data-p="en">EN</button><button data-p="es">ES</button>
+    </div>
+    <div class="chips" id="chips"></div>
+    <div class="row" style="margin-top:12px">
+      <div><label class="f" for="lang">Idioma</label>
+        <select class="in" id="lang"><option value="">Qualquer</option><option value="pt" selected>Português</option><option value="en">Inglês</option><option value="es">Espanhol</option><option value="fr">Francês</option><option value="de">Alemão</option><option value="it">Italiano</option></select></div>
+      <div><label class="f" for="region">Região</label>
+        <select class="in" id="region"><option value="">Qualquer</option><option value="BR" selected>Brasil</option><option value="PT">Portugal</option><option value="US">EUA</option><option value="GB">Reino Unido</option><option value="MX">México</option><option value="ES">Espanha</option><option value="AR">Argentina</option><option value="IN">Índia</option></select></div>
+    </div>
+  </div>
+
+  <div class="grp">
+    <h3>Critérios do canal</h3>
+    <div class="row">
+      <div><label class="f" for="maxAge">1º vídeo há no máx. (dias)</label><input class="in" id="maxAge" type="number" min="7" max="365" value="60"></div>
+      <div><label class="f" for="maxSubs">Máx. inscritos</label><input class="in" id="maxSubs" type="number" min="0" step="1000" value="50000"></div>
+    </div>
+    <div class="row">
+      <div><label class="f" for="minVids">Mín. vídeos longos</label><input class="in" id="minVids" type="number" min="1" max="50" value="2"></div>
+      <div><label class="f" for="maxVids">Máx. vídeos no canal</label><input class="in" id="maxVids" type="number" min="1" max="50" value="30"></div>
+    </div>
+    <div class="row">
+      <div><label class="f" for="minAvg">Mín. média de views</label><input class="in" id="minAvg" type="number" min="0" step="1000" value="10000"></div>
+      <div><label class="f" for="maxShorts">Máx. % de Shorts</label><input class="in" id="maxShorts" type="number" min="0" max="100" value="10"></div>
+    </div>
+    <div class="hint" style="margin:-2px 0 10px">Shorts (≤ 3 min) são ignorados nas buscas e nas médias. Canais com mais Shorts que o limite são descartados.</div>
+  </div>
+
+  <div class="grp">
+    <h3>Busca</h3>
+    <label class="f">Duração dos vídeos buscados</label>
+    <label class="chk"><input type="checkbox" id="durMedium" checked> Médios (4–20 min)</label>
+    <label class="chk"><input type="checkbox" id="durLong" checked> Longos (+20 min)</label>
+    <div class="row" style="margin-top:10px">
+      <div><label class="f" for="pages">Páginas por busca</label>
+        <select class="in" id="pages"><option value="1" selected>1 (50 vídeos)</option><option value="2">2 (100 vídeos)</option><option value="3">3 (150 vídeos)</option></select></div>
+      <div><label class="f" for="order">Ordenar busca por</label>
+        <select class="in" id="order"><option value="viewCount" selected>Mais vistos</option><option value="relevance">Relevância</option><option value="date">Mais recentes</option></select></div>
+    </div>
+    <label class="chk"><input type="checkbox" id="hideSeen"> Esconder canais já minerados antes</label>
+    <div class="quota"><span>Custo estimado</span><span><b id="qEst">0</b> / 10.000 un.</span></div>
+    <button class="btn primary" id="go">Minerar canais</button>
+    <div class="quota" style="margin-top:10px"><span>Cota usada nesta sessão</span><span><b id="qUsed">0</b> un.</span></div>
+  </div>
+</aside>
+
+<main>
+  <nav class="tabs"><button type="button" data-tab="mine" class="on">Mineração</button><button type="button" data-tab="an">Analisar canal</button></nav>
+<div id="view-mine">
+  <div class="top">
+    <div>
+      <h2 id="title">Canais minerados</h2>
+      <div class="sub" id="subtitle">Nenhuma mineração ainda.</div>
+    </div>
+    <div class="tools" id="tools" hidden>
+      <input class="in" id="q" placeholder="Filtrar por nome, vídeo, nicho…">
+      <select class="in" id="sort">
+        <option value="score">Ordenar: Viral Score</option>
+        <option value="avg">Média de views</option>
+        <option value="vpd">Views por dia</option>
+        <option value="vps">Views por inscrito</option>
+        <option value="age">Mais novo</option>
+        <option value="subs">Menos inscritos</option>
+      </select>
+      <button class="btn sm ghost" id="csv">Exportar CSV</button>
+      <button class="btn sm ghost" id="json">JSON</button>
+    </div>
+  </div>
+
+  <section class="run" id="run">
+    <div class="run-head"><span class="run-step" id="step">Preparando…</span><button class="btn sm ghost" id="stop">Parar</button></div>
+    <div class="bar"><i id="prog"></i></div>
+    <div class="log" id="log"></div>
+  </section>
+
+  <div class="funnel" id="funnel" hidden></div>
+  <div class="grid" id="grid"></div>
+
+  <div class="empty" id="empty">
+    <h3>Como funciona</h3>
+    <ol>
+      <li><b>Busca</b> vídeos médios/longos publicados na janela escolhida (ex.: 60 dias), ordenados por views, para cada palavra-chave.</li>
+      <li><b>Filtra canais</b> com poucos inscritos e poucos vídeos.</li>
+      <li><b>Confere a idade real</b>: lê todos os uploads e descarta canais cujo 1º vídeo é mais antigo que a janela.</li>
+      <li><b>Remove Shorts</b>: vídeos ≤ 3 min não entram nas médias; canais com muitos Shorts são descartados.</li>
+      <li><b>Rankeia</b> pelo Viral Score (média, mediana, views/dia e views por inscrito).</li>
+    </ol>
+  </div>
+</div>
+<section id="view-an" hidden></section>
+</main>
+
+
+<!-- Ordem importa: modo → (teste) → utilidades → mineração → análise → inicialização -->
+<script src="modos/dark.js"></script>
+<script src="testes/mock-api.js"></script>
+<script src="shared/util.js"></script>
+<script src="shared/mineracao.js"></script>
+<script src="shared/analise.js"></script>
+<script src="shared/app.js"></script>
+</body>
+</html>
